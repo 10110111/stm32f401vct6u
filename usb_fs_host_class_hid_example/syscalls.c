@@ -13,6 +13,18 @@ extern UART_HandleTypeDef UART_DBG_Handle;
 int __errno;
 
 int
+_kill(int pid, int sig)
+{
+    return 0;
+}
+
+int
+_getpid(void)
+{
+    return 0;
+}
+
+int
 _close(int file)
 {
 

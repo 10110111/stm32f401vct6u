@@ -53,6 +53,8 @@ SRCS =  main.c \
 	log.c
 	
 SRCS += stm32f4xx_hal.c \
+	stm32f4xx_hal_tim.c \
+	stm32f4xx_hal_tim_ex.c \
 	stm32f4xx_hal_rcc.c \
 	stm32f4xx_hal_gpio.c \
 	stm32f4xx_hal_cortex.c \

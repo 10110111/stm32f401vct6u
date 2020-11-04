@@ -3,6 +3,7 @@
  */
 
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_tim.h"
 #include "usbh_core.h"
 #include "usbh_hid.h"
 #include "config.h"
@@ -178,6 +179,12 @@ USBH_HID_EventCallback(USBH_HandleTypeDef *phost)
 	log_info("Event!");
 }
 
+void TIM3_IRQHandler()
+{
+    led_toggle(LED_BLUE);
+    TIM3->SR &= ~TIM_IT_UPDATE;
+}
+
 int
 main(void)
 {
@@ -193,12 +200,28 @@ main(void)
         }
 
         log_init(LOGLEVEL_INFO);
-        log_info("PROJECT STERTED");
+        log_info("PROJECT STARTED");
 
 	/* Configure and start USB HOST CDC */
 	USBH_Init(&hUSBHost, USBH_UserProcess, 0);
 	USBH_RegisterClass(&hUSBHost, USBH_HID_CLASS);
 	USBH_Start(&hUSBHost);
+
+        __TIM3_CLK_ENABLE();
+        HAL_NVIC_EnableIRQ(TIM3_IRQn);
+        TIM_HandleTypeDef tim={};
+        tim.Instance=TIM3;
+        tim.Init.Period=10000-1;
+        tim.Init.Prescaler=SystemCoreClock/10000-1;
+        tim.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+        tim.Init.CounterMode=TIM_COUNTERMODE_UP;
+        tim.Init.AutoReloadPreload=TIM_AUTORELOAD_PRELOAD_DISABLE;
+        if(HAL_TIM_Base_Init(&tim) != HAL_OK)
+            led_on(LED_RED);
+        else if(HAL_TIM_Base_Start_IT(&tim) != HAL_OK)
+            led_on(LED_ORANGE);
+        else
+            led_on(LED_GREEN);
 
         while (1) {
 

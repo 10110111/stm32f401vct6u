@@ -55,7 +55,22 @@ USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id)
 		led_all_off();
                 led_on(LED_RED);
 		break;
+    case HOST_USER_SELECT_CONFIGURATION:
+        led_all_off();
+        led_on(LED_RED);
+        led_on(LED_ORANGE);
+        led_on(LED_GREEN);
+        break;
+    case HOST_USER_CLASS_SELECTED:
+        led_all_off();
+        led_on(LED_RED);
+        led_on(LED_GREEN);
+        // FIXME: Logitech mouse M-BD69 (USB / PS/2) gets stuck in this state
+        break;
 	default:
+        led_all_off();
+        led_on(LED_RED);
+        led_on(LED_ORANGE);
 		break;
 	}
 }
